@@ -11,18 +11,19 @@
  * @returns {Array}
  */
 function nonRecursive(target, rule) {
-    let step = 1;
     const len = target.length;
-    while (step < len) {
-        for (let i = 0; i < len; i += step * 2) {
-            const leftStartIndex = i;
-            const leftEndIndex = Math.max(i + step - 1, len - 1);
-            const rightStartIndex = Math.max(i + step, len - 1);
-            const rightEndIndex = Math.max(i + step * 2 - 1, len - 1);
-            const merged = [];
-            let leftCurrentIndex = leftStartIndex;
-            let rightCurrentIndex = rightStartIndex;
-            while (leftEndIndex - leftCurrentIndex > 0 && rightEndIndex - rightCurrentIndex > 0) {
+    // 步长（每组归并目标的长度）
+    let step = 2;
+    while (step / 2 < len) {
+        // 遍历各组
+        for (let groupStartIndex = 0; groupStartIndex < len; groupStartIndex += step) {
+            // 兼容左半区就到头了的情况
+            const midIndex = Math.min(groupStartIndex + step / 2, len);
+            // 兼容右半区到头的情况
+            const nextGroupStartIndex = Math.min(groupStartIndex + step, len);
+            // 组内分区: [组1(本轮处理区域) groupStartIndex ... | midIndex ... ] [组2 nextGroupStartIndex ... ] [组3]
+            let merged = [], leftCurrentIndex = groupStartIndex, rightCurrentIndex = midIndex;
+            while (leftCurrentIndex < midIndex && rightCurrentIndex < nextGroupStartIndex) {
                 if (rule(target[rightCurrentIndex], target[leftCurrentIndex])) {
                     merged.push(target[leftCurrentIndex]);
                     leftCurrentIndex++;
@@ -31,7 +32,14 @@ function nonRecursive(target, rule) {
                     rightCurrentIndex++;
                 }
             }
-            target.splice(leftStartIndex, rightEndIndex - leftStartIndex, ...merged);
+            if (leftCurrentIndex < midIndex) {
+                merged = merged.concat(target.slice(leftCurrentIndex, midIndex));
+            }
+            if (rightCurrentIndex < nextGroupStartIndex) {
+                merged = merged.concat(target.slice(rightCurrentIndex, nextGroupStartIndex));
+            }
+            // 用merged替换当前组
+            target.splice(groupStartIndex, step, ...merged);
         }
         step *= 2;
     }
@@ -45,12 +53,14 @@ function nonRecursive(target, rule) {
  * @returns {Array}
  */
 function recursive(target, rule) {
+    // 递归终点：剩一个元素
     if (target.length < 2) {
         return target;
     }
     const merged = [];
     const targetLength = target.length;
     const midIndex = Math.floor(targetLength / 2);
+    // 每轮递归就是对左右两轮递归结果的合并（先递归后操作）
     const left = recursive(target.slice(0, midIndex), rule);
     const right = recursive(target.slice(midIndex, targetLength), rule);
     while (left.length > 0 && right.length > 0) {

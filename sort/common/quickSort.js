@@ -44,6 +44,7 @@ function nonRecursive (target, rule) {
  * @returns {Array}
  */
 function recursive(target, rule) {
+    // 递归终点：剩一个元素
     if (target.length <= 1) {
         return target;
     }
