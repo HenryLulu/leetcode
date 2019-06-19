@@ -46,6 +46,31 @@ var postorderTraversal = function(root) {
     return res;
 };
 
+var postorderTraversal = function(root) {
+    if (!root) return [];
+    const res = [];
+    const stack = [];
+    let cur = root;
+    let pre = null;
+    while (cur || stack.length > 0) {
+        while (cur) {
+            stack.push(cur);
+            cur = cur.left;
+        }
+        cur = stack.pop();
+        if (!cur.right || pre && cur.right === pre) {
+            pre = cur;
+            res.push(cur.val);
+            // cur 置空，让下个遍历从栈里取，退到父节点上
+            cur = null;
+        } else {
+            stack.push(cur);
+            cur = cur.right;
+        }
+    }
+    return res;
+};
+
 // test
 const tool = require('./tool/convertDataStruct');
 const tree = tool.array2tree([1,2,3,4,5]);

@@ -56,12 +56,17 @@ var flatten = function(root) {
     let pre = null;
     const flattenANode = root => {
         if (!root) return;
-        flattenANode(root.right);
-        flattenANode(root.left);
-        root.right = pre;
-        root.left = null;
+        if (pre) {
+            pre.left = null;
+            pre.right = root;
+        }
         pre = root;
+        const right = root.right;
+        flattenANode(root.left);
+        flattenANode(right);
     }
+    flattenANode(root)
+    return root;
 }
 
 // test

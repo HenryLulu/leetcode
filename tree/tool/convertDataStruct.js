@@ -26,11 +26,17 @@ const array2tree = arr => {
             };
             queue.push(curParent.left);
         }
+        if (curLeft === null) {
+            curParent.left = null;
+        }
         if (curRight || curRight === 0) {
             curParent.right = {
                 val: curRight
             };
             queue.push(curParent.right);
+        }
+        if (curRight === null) {
+            curParent.right = null;
         }
     }
     return root;
@@ -47,6 +53,7 @@ const tree2array = root => {
     const queue = [root];
     while (queue.length > 0) {
         const curNode = queue.shift();
+        if (curNode === null) arr.push(null);
         if (!curNode) continue;
         arr.push(curNode.val);
         queue.push(curNode.left);
@@ -57,4 +64,4 @@ const tree2array = root => {
 exports.tree2array = tree2array;
 
 // console.log(array2tree([3,9,20,null,null,15,7]))
-// console.log(tree2array(array2tree([4,2,7,1,3,6,9])))
+// console.log(tree2array(array2tree([3,9,20,null,null,15,7])))
