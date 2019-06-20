@@ -1,4 +1,4 @@
-# 树
+# 二叉树
 ## js中的表示
 ### object
 通常通过一个包含 val/left/right 属性的对象表示一个节点，通过 left/right 把节点连接成树。如：
