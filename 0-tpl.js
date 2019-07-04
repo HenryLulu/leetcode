@@ -11,3 +11,4 @@
 // code
 
 // test
+console.log(fn(arg));
